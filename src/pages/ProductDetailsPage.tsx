@@ -97,7 +97,7 @@ const ProductDetailsPage = () => {
     setSubmittingReview(true);
     try {
       await api.post('/reviews', {
-        productId: id,
+        product_id: id,
         rating: newReview.rating,
         comment: newReview.comment,
       });
@@ -105,7 +105,7 @@ const ProductDetailsPage = () => {
       setNewReview({ rating: 5, comment: '' });
       fetchReviews();
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || 'Failed to submit review');
+      toast.error(error?.response?.data?.error || 'Failed to submit review');
     } finally {
       setSubmittingReview(false);
     }
@@ -342,18 +342,20 @@ const ProductDetailsPage = () => {
               </div>
             </div>
             <div className="mb-3">
-              <label className="block text-sm text-gray-600 mb-1">Comment</label>
+              <label className="block text-sm text-gray-600 mb-1">Comment (optional, min 10 characters if provided)</label>
               <textarea
                 value={newReview.comment}
                 onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
                 className="w-full border border-gray-300 rounded-sm p-3 text-sm focus:border-primary outline-none"
                 rows={3}
-                required
+                maxLength={1000}
+                placeholder="Share your experience with this product..."
               />
+              <p className="text-xs text-gray-400 mt-1">{newReview.comment.length}/1000 characters</p>
             </div>
             <button
               type="submit"
-              disabled={submittingReview}
+              disabled={submittingReview || (newReview.comment.length > 0 && newReview.comment.length < 10)}
               className="daraz-btn-primary disabled:opacity-50"
             >
               {submittingReview ? 'Submitting...' : 'Submit Review'}
