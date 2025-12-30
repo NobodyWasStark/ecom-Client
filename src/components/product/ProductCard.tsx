@@ -8,9 +8,19 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  // Safe helper to calculate discount if we had an original price (mocking it for now)
-  const originalPrice = product.price * 1.2;
-  const discount = Math.round(((originalPrice - product.price) / originalPrice) * 100);
+  // Calculate discount only if original_price is set and greater than price
+  const hasDiscount = product.original_price && product.original_price > product.price;
+  const discount = hasDiscount
+    ? Math.round(((product.original_price! - product.price) / product.original_price!) * 100)
+    : 0;
+
+  // Use real rating and review count from backend
+  const rating = product.averageRating ?? 0;
+  const reviewCount = product.reviewCount ?? 0;
+
+  // Generate star rating display
+  const fullStars = Math.floor(rating);
+  const hasHalfStar = rating - fullStars >= 0.5;
 
   return (
     <Link to={`/products/${product.id}`} className="daraz-card group cursor-pointer h-[320px] flex flex-col">
@@ -21,7 +31,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           alt={product.name} 
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
-        {/* Discount Tag */}
+        {/* Discount Tag - Only show if discount exists */}
         {discount > 0 && (
           <div className="absolute top-0 right-0 bg-[#f85606] text-white text-xs px-2 py-1 rounded-bl-lg font-bold">
             -{discount}%
@@ -40,26 +50,36 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
              <span className="text-lg font-bold text-[#f85606]">
               ৳ {product.price.toLocaleString()}
              </span>
-             {discount > 0 && (
+             {hasDiscount && (
                <div className="flex items-center gap-1 text-xs text-gray-500">
-                 <span className="line-through">৳ {Math.round(originalPrice).toLocaleString()}</span>
+                 <span className="line-through">৳ {product.original_price!.toLocaleString()}</span>
                  <span>-{discount}%</span>
                </div>
              )}
            </div>
         </div>
 
-        {/* Rating & Action */}
+        {/* Rating & Review Count - Only show if there are reviews */}
         <div className="mt-2 text-xs flex items-center justify-between">
-            <div className="flex items-center text-yellow-400">
-              <Star className="w-3 h-3 fill-current" />
-              <Star className="w-3 h-3 fill-current" />
-              <Star className="w-3 h-3 fill-current" />
-              <Star className="w-3 h-3 fill-current" />
-              <Star className="w-3 h-3 fill-current text-gray-300" />
-              <span className="text-gray-400 ml-1">(54)</span>
-            </div>
-            {/* Hover Action - Daraz doesn't always show buttons on card, but sometimes a small icon */}
+            {reviewCount > 0 ? (
+              <div className="flex items-center text-yellow-400">
+                {[...Array(5)].map((_, i) => (
+                  <Star
+                    key={i}
+                    className={`w-3 h-3 ${
+                      i < fullStars
+                        ? 'fill-current'
+                        : i === fullStars && hasHalfStar
+                        ? 'fill-current opacity-50'
+                        : 'text-gray-300'
+                    }`}
+                  />
+                ))}
+                <span className="text-gray-400 ml-1">({reviewCount})</span>
+              </div>
+            ) : (
+              <div className="text-gray-400 text-xs">No reviews yet</div>
+            )}
         </div>
       </div>
     </Link>
@@ -67,3 +87,4 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 };
 
 export default ProductCard;
+

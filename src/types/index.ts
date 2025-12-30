@@ -10,11 +10,14 @@ export interface Product {
   name: string;
   description: string;
   price: number;
+  original_price?: number | null;
   stock: number;
   imageUrl?: string;
   image_url?: string;
   category?: string;
   category_id?: string;
+  averageRating?: number | null;
+  reviewCount?: number;
   createdAt?: string;
   updatedAt?: string;
   created_at?: string;

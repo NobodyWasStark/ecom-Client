@@ -9,6 +9,7 @@ interface Product {
   slug: string;
   description: string;
   price: number;
+  original_price: number | null;
   stock: number;
   is_preorder: boolean;
   image_url: string | null;
@@ -32,6 +33,7 @@ const AdminProductsPage = () => {
     name: string;
     description: string;
     price: number | '';
+    original_price: number | '';
     stock: number | '';
     is_preorder: boolean;
     category_id: string;
@@ -40,6 +42,7 @@ const AdminProductsPage = () => {
     name: '',
     description: '',
     price: '',
+    original_price: '',
     stock: '',
     is_preorder: false,
     category_id: '',
@@ -92,6 +95,7 @@ const AdminProductsPage = () => {
         name: formData.name,
         description: formData.description,
         price: Number(formData.price) || 0,
+        original_price: formData.original_price ? Number(formData.original_price) : null,
         stock: Number(formData.stock) || 0,
         is_preorder: formData.is_preorder,
         category_id: formData.category_id || undefined,
@@ -132,6 +136,7 @@ const AdminProductsPage = () => {
       name: product.name,
       description: product.description || '',
       price: product.price,
+      original_price: product.original_price || '',
       stock: product.stock,
       is_preorder: product.is_preorder,
       category_id: product.category_id || '',
@@ -146,6 +151,7 @@ const AdminProductsPage = () => {
       name: '',
       description: '',
       price: '',
+      original_price: '',
       stock: '',
       is_preorder: false,
       category_id: '',
@@ -288,29 +294,41 @@ const AdminProductsPage = () => {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Price (৳) *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Sale Price (৳) *</label>
                   <input
                     type="number"
                     value={formData.price === '' ? '' : formData.price}
                     onChange={(e) => setFormData({ ...formData, price: e.target.value === '' ? '' : Number(e.target.value) })}
                     className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:border-orange-500 outline-none"
                     min="0"
-                    placeholder="Enter price"
+                    placeholder="Current selling price"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Stock *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Original Price (৳)</label>
                   <input
                     type="number"
-                    value={formData.stock === '' ? '' : formData.stock}
-                    onChange={(e) => setFormData({ ...formData, stock: e.target.value === '' ? '' : Number(e.target.value) })}
+                    value={formData.original_price === '' ? '' : formData.original_price}
+                    onChange={(e) => setFormData({ ...formData, original_price: e.target.value === '' ? '' : Number(e.target.value) })}
                     className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:border-orange-500 outline-none"
                     min="0"
-                    placeholder="Enter stock"
-                    required
+                    placeholder="Leave empty for no discount"
                   />
+                  <p className="text-xs text-gray-400 mt-1">Set higher than sale price to show discount</p>
                 </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Stock *</label>
+                <input
+                  type="number"
+                  value={formData.stock === '' ? '' : formData.stock}
+                  onChange={(e) => setFormData({ ...formData, stock: e.target.value === '' ? '' : Number(e.target.value) })}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:border-orange-500 outline-none"
+                  min="0"
+                  placeholder="Enter stock"
+                  required
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
