@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { api } from '../lib/api';
 import type { Product } from '../types';
 import ProductCard from '../components/product/ProductCard';
-import { ChevronRight } from 'lucide-react';
 
 interface Category {
   id: string;
@@ -87,25 +86,25 @@ const HomePage = () => {
       {/* 1. Hero Section: Slider + Categories */}
       <div className="grid grid-cols-12 gap-4 h-[344px] mb-8">
         {/* Categories Sidebar */}
-        <div className="col-span-2 bg-white rounded-sm shadow-card p-3 hidden md:block overflow-hidden">
-          <ul className="space-y-2 text-xs text-gray-600">
+        <div className="col-span-2 bg-white rounded-sm shadow-card hidden md:block overflow-y-auto">
+          <ul className="py-2">
             {categories.length > 0 ? (
-              categories.slice(0, 12).map((cat) => (
+              categories.slice(0, 10).map((cat) => (
                 <li key={cat.id}>
                   <Link 
                     to={`/products?category=${cat.id}`}
-                    className="hover:text-primary hover:bg-gray-50 p-1 cursor-pointer flex justify-between group transition-colors"
+                    className="block px-4 py-2.5 text-sm text-gray-700 hover:text-primary hover:bg-orange-50 cursor-pointer transition-colors border-l-2 border-transparent hover:border-primary"
                   >
-                    <span>{cat.name}</span>
-                    <ChevronRight className="w-3 h-3 opacity-0 group-hover:opacity-100" />
+                    {cat.name}
                   </Link>
                 </li>
               ))
             ) : (
               ['Electronics', 'Fashion', 'Home & Living', 'Beauty', 'Sports', 'Toys', 'Groceries', 'Automotive'].map((cat, idx) => (
-                <li key={idx} className="hover:text-primary hover:bg-gray-50 p-1 cursor-pointer flex justify-between group transition-colors">
-                  <span>{cat}</span>
-                  <ChevronRight className="w-3 h-3 opacity-0 group-hover:opacity-100" />
+                <li key={idx}>
+                  <span className="block px-4 py-2.5 text-sm text-gray-700 hover:text-primary hover:bg-orange-50 cursor-pointer transition-colors border-l-2 border-transparent hover:border-primary">
+                    {cat}
+                  </span>
                 </li>
               ))
             )}
