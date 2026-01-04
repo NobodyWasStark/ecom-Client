@@ -15,10 +15,54 @@ const HomePage = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  // Flash Sale countdown timer - 3 hours from page load
+  const [timeLeft, setTimeLeft] = useState(() => {
+    // Check if we have a stored end time in sessionStorage
+    const storedEndTime = sessionStorage.getItem('flashSaleEndTime');
+    if (storedEndTime) {
+      const remaining = Math.max(0, Math.floor((parseInt(storedEndTime) - Date.now()) / 1000));
+      if (remaining > 0) return remaining;
+    }
+    // Set new end time (3 hours from now)
+    const endTime = Date.now() + 3 * 60 * 60 * 1000;
+    sessionStorage.setItem('flashSaleEndTime', endTime.toString());
+    return 3 * 60 * 60; // 3 hours in seconds
+  });
 
   useEffect(() => {
     fetchData();
   }, []);
+
+  // Countdown timer effect
+  useEffect(() => {
+    if (timeLeft <= 0) {
+      // Reset timer when it reaches 0 (new flash sale cycle)
+      const newEndTime = Date.now() + 3 * 60 * 60 * 1000;
+      sessionStorage.setItem('flashSaleEndTime', newEndTime.toString());
+      setTimeLeft(3 * 60 * 60);
+      return;
+    }
+
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          // Reset to 3 hours when timer expires
+          const newEndTime = Date.now() + 3 * 60 * 60 * 1000;
+          sessionStorage.setItem('flashSaleEndTime', newEndTime.toString());
+          return 3 * 60 * 60;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [timeLeft]);
+
+  // Format time for display
+  const hours = String(Math.floor(timeLeft / 3600)).padStart(2, '0');
+  const minutes = String(Math.floor((timeLeft % 3600) / 60)).padStart(2, '0');
+  const seconds = String(timeLeft % 60).padStart(2, '0');
 
   const fetchData = async () => {
     try {
@@ -107,10 +151,12 @@ const HomePage = () => {
           <div className="flex justify-between items-center mb-4 border-b border-gray-100 pb-2">
             <div className="flex gap-4 items-center">
               <span className="text-primary font-bold">On Sale Now</span>
-              <div className="flex gap-2">
-                <span className="bg-black text-white px-1 text-xs rounded">02</span>:
-                <span className="bg-black text-white px-1 text-xs rounded">45</span>:
-                <span className="bg-black text-white px-1 text-xs rounded">18</span>
+              <div className="flex gap-2 items-center">
+                <span className="bg-black text-white px-2 py-1 text-sm font-mono rounded min-w-[28px] text-center">{hours}</span>
+                <span className="text-gray-600 font-bold">:</span>
+                <span className="bg-black text-white px-2 py-1 text-sm font-mono rounded min-w-[28px] text-center">{minutes}</span>
+                <span className="text-gray-600 font-bold">:</span>
+                <span className="bg-black text-white px-2 py-1 text-sm font-mono rounded min-w-[28px] text-center">{seconds}</span>
               </div>
             </div>
             <Link to="/products" className="text-primary border border-primary px-4 py-1 text-sm uppercase hover:bg-orange-50 font-medium">
