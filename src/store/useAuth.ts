@@ -1,7 +1,7 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { api } from '../lib/api';
-import type { User } from '../types';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { api } from "../lib/api";
+import type { User } from "../types";
 
 interface AuthState {
   user: User | null;
@@ -23,7 +23,7 @@ export const useAuth = create<AuthState>()(
       login: async (email, password) => {
         set({ isLoading: true });
         try {
-          const { data } = await api.post('/auth/login', { email, password });
+          const { data } = await api.post("/auth/login", { email, password });
           // Backend returns { data: { user, token } }
           const result = data.data || data;
           set({ user: result.user, isAuthenticated: true });
@@ -36,25 +36,29 @@ export const useAuth = create<AuthState>()(
       register: async (name, email, password) => {
         set({ isLoading: true });
         try {
-          const { data } = await api.post('/auth/register', { name, email, password });
+          const { data } = await api.post("/auth/register", {
+            name,
+            email,
+            password,
+          });
           const result = data.data || data;
           set({ user: result.user, isAuthenticated: true });
           return result.user;
         } finally {
-           set({ isLoading: false });
+          set({ isLoading: false });
         }
       },
 
       logout: () => {
         set({ user: null, isAuthenticated: false });
         // Also call backend logout to clear cookie
-        api.post('/auth/logout').catch(() => {});
+        api.post("/auth/logout").catch(() => {});
       },
 
       checkAuth: async () => {
         set({ isLoading: true });
         try {
-          const { data } = await api.get('/auth/profile');
+          const { data } = await api.get("/auth/profile");
           // API returns { data: user }
           set({ user: data.data, isAuthenticated: true });
         } catch {
@@ -65,8 +69,11 @@ export const useAuth = create<AuthState>()(
       },
     }),
     {
-      name: 'auth-storage',
-      partialize: (state) => ({ user: state.user, isAuthenticated: state.isAuthenticated }),
-    }
-  )
+      name: "auth-storage",
+      partialize: (state) => ({
+        user: state.user,
+        isAuthenticated: state.isAuthenticated,
+      }),
+    },
+  ),
 );
