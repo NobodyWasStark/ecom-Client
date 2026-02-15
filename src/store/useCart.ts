@@ -2,9 +2,9 @@ import { create } from 'zustand';
 import { api } from '../lib/api';
 import toast from 'react-hot-toast';
 
-export interface CartItem {
+export interface CartItemDisplay {
   id: string;
-  productId: string;
+  product_id: string;
   name: string;
   price: number;
   image: string;
@@ -12,7 +12,7 @@ export interface CartItem {
 }
 
 interface CartState {
-  items: CartItem[];
+  items: CartItemDisplay[];
   isLoading: boolean;
   fetchCart: () => Promise<void>;
   addItem: (product: any, quantity?: number) => Promise<void>;
@@ -21,10 +21,10 @@ interface CartState {
   clearCartLocally: () => void;
 }
 
-// Transform backend cart item to frontend format
-const transformCartItem = (item: any): CartItem => ({
+// Transform backend cart item to frontend display format
+const transformCartItem = (item: any): CartItemDisplay => ({
   id: item.id,
-  productId: item.product_id || item.productId,
+  product_id: item.product_id || item.productId,
   name: item.product?.name || item.name || 'Unknown Product',
   price: item.product?.price || item.price || 0,
   image: item.product?.image_url || item.product?.imageUrl || item.image || '',
@@ -39,13 +39,12 @@ export const useCart = create<CartState>((set, get) => ({
     set({ isLoading: true });
     try {
       const { data } = await api.get('/cart');
-      // Backend returns { data: { items: [...] } } or { data: { cartItems: [...] } }
+      // Backend returns { data: { items: [...] } }
       const cartData = data?.data || data;
       const items = cartData?.items || cartData?.cartItems || [];
       set({ items: Array.isArray(items) ? items.map(transformCartItem) : [] });
     } catch (error: any) {
       console.error("Failed to fetch cart:", error);
-      // 401 means not logged in - just set empty cart
       if (error?.response?.status !== 401) {
         // Only log non-auth errors
       }
@@ -58,7 +57,6 @@ export const useCart = create<CartState>((set, get) => ({
   addItem: async (product, quantity = 1) => {
     set({ isLoading: true });
     try {
-      // Backend expects product_id (snake_case), not productId
       await api.post('/cart/items', { 
         product_id: product.id, 
         quantity 

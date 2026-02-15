@@ -7,17 +7,20 @@ import toast from 'react-hot-toast';
 
 interface Address {
   id: string;
-  fullName: string;
+  full_name: string;
   phone: string;
-  address: string;
+  address_line1: string;
+  address_line2?: string;
   city: string;
-  postalCode: string;
-  isDefault: boolean;
+  state: string;
+  postal_code: string;
+  country: string;
+  is_default: boolean;
 }
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
-  const { items, clearCartLocally } = useCart();
+  const { items } = useCart();
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -36,7 +39,7 @@ const CheckoutPage = () => {
       const addressList = data.data || data || [];
       setAddresses(addressList);
       // Auto-select default address
-      const defaultAddr = addressList.find((a: Address) => a.isDefault);
+      const defaultAddr = addressList.find((a: Address) => a.is_default);
       if (defaultAddr) setSelectedAddressId(defaultAddr.id);
       else if (addressList.length > 0) setSelectedAddressId(addressList[0].id);
     } catch (error) {
@@ -61,7 +64,7 @@ const CheckoutPage = () => {
     try {
       // Step 1: Create order from cart
       const orderRes = await api.post('/orders/from-cart', {
-        addressId: selectedAddressId,
+        shipping_address_id: selectedAddressId,
       });
       const order = orderRes.data.data || orderRes.data;
 
@@ -152,13 +155,13 @@ const CheckoutPage = () => {
                     />
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
-                        <span className="font-medium text-gray-800">{addr.fullName}</span>
-                        {addr.isDefault && (
+                        <span className="font-medium text-gray-800">{addr.full_name}</span>
+                        {addr.is_default && (
                           <span className="text-xs bg-primary text-white px-2 py-0.5 rounded">Default</span>
                         )}
                       </div>
                       <p className="text-sm text-gray-600">{addr.phone}</p>
-                      <p className="text-sm text-gray-600">{addr.address}, {addr.city} {addr.postalCode}</p>
+                      <p className="text-sm text-gray-600">{addr.address_line1}, {addr.city} {addr.postal_code}</p>
                     </div>
                     {selectedAddressId === addr.id && (
                       <Check className="w-5 h-5 text-primary" />

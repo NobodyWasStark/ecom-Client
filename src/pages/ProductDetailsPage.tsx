@@ -7,22 +7,11 @@ import { useCart } from '../store/useCart';
 import { useAuth } from '../store/useAuth';
 import toast from 'react-hot-toast';
 
-interface ProductImage {
-  id: string;
-  url: string;
-  alt_text?: string;
-  is_primary?: boolean;
-}
-
-interface ExtendedProduct extends Product {
-  images?: ProductImage[];
-}
-
 interface Review {
   id: string;
   rating: number;
   comment: string;
-  createdAt: string;
+  created_at: string;
   user: {
     id: string;
     name: string;
@@ -31,7 +20,7 @@ interface Review {
 
 const ProductDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
-  const [product, setProduct] = useState<ExtendedProduct | null>(null);
+  const [product, setProduct] = useState<Product | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
@@ -123,7 +112,7 @@ const ProductDetailsPage = () => {
     }
     
     // Add the main image_url if exists and not already in array
-    const mainImage = product?.imageUrl || (product as any)?.image_url;
+    const mainImage = product?.image_url;
     if (mainImage && !images.includes(mainImage)) {
       images.unshift(mainImage);
     }
@@ -383,7 +372,7 @@ const ProductDetailsPage = () => {
                     </div>
                     <p className="text-sm text-gray-600">{review.comment}</p>
                     <p className="text-xs text-gray-400 mt-1">
-                      {new Date(review.createdAt).toLocaleDateString()}
+                      {new Date(review.created_at).toLocaleDateString()}
                     </p>
                   </div>
                 </div>

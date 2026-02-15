@@ -1,21 +1,14 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { api } from '../lib/api';
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  createdAt?: string;
-}
+import type { User } from '../types';
 
 interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<User>;
+  register: (name: string, email: string, password: string) => Promise<User>;
   logout: () => void;
   checkAuth: () => Promise<void>;
 }
@@ -31,12 +24,10 @@ export const useAuth = create<AuthState>()(
         set({ isLoading: true });
         try {
           const { data } = await api.post('/auth/login', { email, password });
-          // Adjust based on response: { user, token }
-          localStorage.setItem('token', data.token);
-          set({ user: data.user, isAuthenticated: true });
-          return data;
-        } catch (error) {
-          throw error;
+          // Backend returns { data: { user, token } }
+          const result = data.data || data;
+          set({ user: result.user, isAuthenticated: true });
+          return result.user;
         } finally {
           set({ isLoading: false });
         }
@@ -46,17 +37,18 @@ export const useAuth = create<AuthState>()(
         set({ isLoading: true });
         try {
           const { data } = await api.post('/auth/register', { name, email, password });
-          return data;
-        } catch (error) {
-           throw error;
+          const result = data.data || data;
+          set({ user: result.user, isAuthenticated: true });
+          return result.user;
         } finally {
            set({ isLoading: false });
         }
       },
 
       logout: () => {
-        localStorage.removeItem('token');
         set({ user: null, isAuthenticated: false });
+        // Also call backend logout to clear cookie
+        api.post('/auth/logout').catch(() => {});
       },
 
       checkAuth: async () => {
@@ -65,8 +57,7 @@ export const useAuth = create<AuthState>()(
           const { data } = await api.get('/auth/profile');
           // API returns { data: user }
           set({ user: data.data, isAuthenticated: true });
-        } catch (error) {
-          localStorage.removeItem('token');
+        } catch {
           set({ user: null, isAuthenticated: false });
         } finally {
           set({ isLoading: false });

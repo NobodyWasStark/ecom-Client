@@ -40,7 +40,7 @@ export const CartPage: React.FC = () => {
                      <input type="checkbox" className="mt-1 accent-primary" defaultChecked />
                      <img src={item.image || 'https://via.placeholder.com/80'} alt={item.name} className="w-16 h-16 object-cover rounded-sm border border-gray-200" />
                      <div className="flex flex-col justify-between">
-                        <Link to={`/products/${item.productId || ''}`} className="text-sm font-medium hover:text-primary line-clamp-2">
+                        <Link to={`/products/${item.product_id || ''}`} className="text-sm font-medium hover:text-primary line-clamp-2">
                           {item.name}
                         </Link>
                         <span className="text-xs text-gray-400">Brand: No Brand, Color: Black</span>

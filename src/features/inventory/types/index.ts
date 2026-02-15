@@ -1,10 +1,2 @@
-export interface Product {
-  id: string;
-  name: string;
-  sku: string; // Stock Keeping Unit (e.g., "NIKE-AIR-001")
-  category: string;
-  quantity: number;
-  price: number;
-  status: 'in_stock' | 'low_stock' | 'out_of_stock';
-  lastUpdated: string;
-}
+// Re-export Product from main types - use the real backend-aligned type
+export type { Product } from '../../../types';

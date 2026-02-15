@@ -150,7 +150,7 @@ const ProfilePage = () => {
                     <div>
                       <p className="text-sm text-gray-500">Member Since</p>
                       <p className="font-medium text-gray-800">
-                        {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
+                        {user?.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}
                       </p>
                     </div>
                   </div>

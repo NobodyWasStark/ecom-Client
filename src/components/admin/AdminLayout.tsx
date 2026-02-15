@@ -1,5 +1,5 @@
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { 
   LayoutDashboard, 
   Package, 
@@ -51,7 +51,7 @@ const AdminLayout = () => {
   const { user, isAuthenticated, isLoading, logout, checkAuth } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sessionVerified, setSessionVerified] = useState(false);
-  const [lastActivity, setLastActivity] = useState(Date.now());
+  const lastActivityRef = useRef<number>(0);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [notifications, setNotifications] = useState(getNotifications());
@@ -60,7 +60,7 @@ const AdminLayout = () => {
   const unreadCount = notifications.filter(n => !n.read).length;
 
   const updateActivity = useCallback(() => {
-    setLastActivity(Date.now());
+    lastActivityRef.current = Date.now();
   }, []);
 
   useEffect(() => {
@@ -76,15 +76,22 @@ const AdminLayout = () => {
   }, [checkAuth]);
 
   useEffect(() => {
+    lastActivityRef.current = Date.now();
+  }, []);
+
+  useEffect(() => {
     const interval = setInterval(() => {
-      if (Date.now() - lastActivity > SESSION_TIMEOUT) {
+      if (lastActivityRef.current === 0) {
+        return;
+      }
+      if (Date.now() - lastActivityRef.current > SESSION_TIMEOUT) {
         toast.error('Session timed out due to inactivity');
         logout();
         navigate('/login?session=timeout');
       }
     }, 60000);
     return () => clearInterval(interval);
-  }, [lastActivity, logout, navigate, SESSION_TIMEOUT]);
+  }, [logout, navigate, SESSION_TIMEOUT]);
 
   useEffect(() => {
     const events = ['mousedown', 'keydown', 'scroll', 'touchstart'];

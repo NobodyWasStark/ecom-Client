@@ -8,7 +8,7 @@ interface Review {
   id: string;
   rating: number;
   comment: string;
-  createdAt: string;
+  created_at: string;
   product: {
     id: string;
     name: string;
@@ -157,7 +157,7 @@ const MyReviewsPage = () => {
                           ))}
                         </div>
                         <span className="text-xs text-gray-500">
-                          {new Date(review.createdAt).toLocaleDateString()}
+                          {new Date(review.created_at).toLocaleDateString()}
                         </span>
                       </div>
                       <p className="text-sm text-gray-600 mt-2">{review.comment}</p>

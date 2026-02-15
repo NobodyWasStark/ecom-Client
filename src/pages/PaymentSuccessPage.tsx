@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useCart } from '../store/useCart';
 import { CheckCircle } from 'lucide-react';

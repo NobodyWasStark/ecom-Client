@@ -7,15 +7,18 @@ import toast from 'react-hot-toast';
 interface OrderDetails {
   id: string;
   status: string;
-  totalAmount: number;
-  createdAt: string;
-  shippingAddress: {
-    fullName: string;
+  total_amount: number;
+  created_at: string;
+  shipping_address: {
+    full_name: string;
     phone: string;
-    address: string;
+    address_line1: string;
+    address_line2?: string;
     city: string;
-    postalCode: string;
-  };
+    state: string;
+    postal_code: string;
+    country: string;
+  } | null;
   items: Array<{
     id: string;
     quantity: number;
@@ -23,7 +26,7 @@ interface OrderDetails {
     product: {
       id: string;
       name: string;
-      imageUrl: string;
+      image_url: string;
     };
   }>;
 }
@@ -105,7 +108,7 @@ const OrderDetailsPage = () => {
               <div>
                 <p className="font-bold">{status.text}</p>
                 <p className="text-sm opacity-80">
-                  Ordered on {new Date(order.createdAt).toLocaleDateString('en-US', {
+                  Ordered on {new Date(order.created_at).toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric',
@@ -127,7 +130,7 @@ const OrderDetailsPage = () => {
               {order.items.map((item) => (
                 <div key={item.id} className="p-4 flex items-center gap-4">
                   <img 
-                    src={item.product?.imageUrl || 'https://via.placeholder.com/80'} 
+                    src={item.product?.image_url || 'https://via.placeholder.com/80'} 
                     alt={item.product?.name}
                     className="w-20 h-20 object-cover rounded-sm border border-gray-100"
                   />
@@ -155,12 +158,12 @@ const OrderDetailsPage = () => {
               <MapPin className="w-5 h-5 text-gray-400" />
               Shipping Address
             </h3>
-            {order.shippingAddress ? (
+            {order.shipping_address ? (
               <div className="text-sm text-gray-600 space-y-1">
-                <p className="font-medium text-gray-800">{order.shippingAddress.fullName}</p>
-                <p>{order.shippingAddress.phone}</p>
-                <p>{order.shippingAddress.address}</p>
-                <p>{order.shippingAddress.city}, {order.shippingAddress.postalCode}</p>
+                <p className="font-medium text-gray-800">{order.shipping_address.full_name}</p>
+                <p>{order.shipping_address.phone}</p>
+                <p>{order.shipping_address.address_line1}</p>
+                <p>{order.shipping_address.city}, {order.shipping_address.postal_code}</p>
               </div>
             ) : (
               <p className="text-sm text-gray-500">No address provided</p>
@@ -176,7 +179,7 @@ const OrderDetailsPage = () => {
             <div className="space-y-2 text-sm">
               <div className="flex justify-between text-gray-600">
                 <span>Subtotal</span>
-                <span>৳ {(order.totalAmount - 60).toLocaleString()}</span>
+                <span>৳ {(order.total_amount - 60).toLocaleString()}</span>
               </div>
               <div className="flex justify-between text-gray-600">
                 <span>Shipping</span>
@@ -184,7 +187,7 @@ const OrderDetailsPage = () => {
               </div>
               <div className="flex justify-between font-bold text-gray-800 pt-2 border-t border-gray-100">
                 <span>Total</span>
-                <span className="text-primary">৳ {order.totalAmount.toLocaleString()}</span>
+                <span className="text-primary">৳ {order.total_amount.toLocaleString()}</span>
               </div>
             </div>
             <div className="mt-4 pt-4 border-t border-gray-100">

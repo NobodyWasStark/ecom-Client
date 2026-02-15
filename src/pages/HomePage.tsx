@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { api } from '../lib/api';
 import type { Product } from '../types';
 import ProductCard from '../components/product/ProductCard';
+import { ChevronRight } from 'lucide-react';
 
 interface Category {
   id: string;
@@ -14,54 +15,10 @@ const HomePage = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
-  
-  // Flash Sale countdown timer - 3 hours from page load
-  const [timeLeft, setTimeLeft] = useState(() => {
-    // Check if we have a stored end time in sessionStorage
-    const storedEndTime = sessionStorage.getItem('flashSaleEndTime');
-    if (storedEndTime) {
-      const remaining = Math.max(0, Math.floor((parseInt(storedEndTime) - Date.now()) / 1000));
-      if (remaining > 0) return remaining;
-    }
-    // Set new end time (3 hours from now)
-    const endTime = Date.now() + 3 * 60 * 60 * 1000;
-    sessionStorage.setItem('flashSaleEndTime', endTime.toString());
-    return 3 * 60 * 60; // 3 hours in seconds
-  });
 
   useEffect(() => {
     fetchData();
   }, []);
-
-  // Countdown timer effect
-  useEffect(() => {
-    if (timeLeft <= 0) {
-      // Reset timer when it reaches 0 (new flash sale cycle)
-      const newEndTime = Date.now() + 3 * 60 * 60 * 1000;
-      sessionStorage.setItem('flashSaleEndTime', newEndTime.toString());
-      setTimeLeft(3 * 60 * 60);
-      return;
-    }
-
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          // Reset to 3 hours when timer expires
-          const newEndTime = Date.now() + 3 * 60 * 60 * 1000;
-          sessionStorage.setItem('flashSaleEndTime', newEndTime.toString());
-          return 3 * 60 * 60;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [timeLeft]);
-
-  // Format time for display
-  const hours = String(Math.floor(timeLeft / 3600)).padStart(2, '0');
-  const minutes = String(Math.floor((timeLeft % 3600) / 60)).padStart(2, '0');
-  const seconds = String(timeLeft % 60).padStart(2, '0');
 
   const fetchData = async () => {
     try {
@@ -86,25 +43,25 @@ const HomePage = () => {
       {/* 1. Hero Section: Slider + Categories */}
       <div className="grid grid-cols-12 gap-4 h-[344px] mb-8">
         {/* Categories Sidebar */}
-        <div className="col-span-2 bg-white rounded-sm shadow-card hidden md:block overflow-y-auto">
-          <ul className="py-2">
+        <div className="col-span-2 bg-white rounded-sm shadow-card p-3 hidden md:block overflow-hidden">
+          <ul className="space-y-2 text-xs text-gray-600">
             {categories.length > 0 ? (
-              categories.slice(0, 10).map((cat) => (
+              categories.slice(0, 12).map((cat) => (
                 <li key={cat.id}>
                   <Link 
                     to={`/products?category=${cat.id}`}
-                    className="block px-4 py-2.5 text-sm text-gray-700 hover:text-primary hover:bg-orange-50 cursor-pointer transition-colors border-l-2 border-transparent hover:border-primary"
+                    className="hover:text-primary hover:bg-gray-50 p-1 cursor-pointer flex justify-between group transition-colors"
                   >
-                    {cat.name}
+                    <span>{cat.name}</span>
+                    <ChevronRight className="w-3 h-3 opacity-0 group-hover:opacity-100" />
                   </Link>
                 </li>
               ))
             ) : (
               ['Electronics', 'Fashion', 'Home & Living', 'Beauty', 'Sports', 'Toys', 'Groceries', 'Automotive'].map((cat, idx) => (
-                <li key={idx}>
-                  <span className="block px-4 py-2.5 text-sm text-gray-700 hover:text-primary hover:bg-orange-50 cursor-pointer transition-colors border-l-2 border-transparent hover:border-primary">
-                    {cat}
-                  </span>
+                <li key={idx} className="hover:text-primary hover:bg-gray-50 p-1 cursor-pointer flex justify-between group transition-colors">
+                  <span>{cat}</span>
+                  <ChevronRight className="w-3 h-3 opacity-0 group-hover:opacity-100" />
                 </li>
               ))
             )}
@@ -150,12 +107,10 @@ const HomePage = () => {
           <div className="flex justify-between items-center mb-4 border-b border-gray-100 pb-2">
             <div className="flex gap-4 items-center">
               <span className="text-primary font-bold">On Sale Now</span>
-              <div className="flex gap-2 items-center">
-                <span className="bg-black text-white px-2 py-1 text-sm font-mono rounded min-w-[28px] text-center">{hours}</span>
-                <span className="text-gray-600 font-bold">:</span>
-                <span className="bg-black text-white px-2 py-1 text-sm font-mono rounded min-w-[28px] text-center">{minutes}</span>
-                <span className="text-gray-600 font-bold">:</span>
-                <span className="bg-black text-white px-2 py-1 text-sm font-mono rounded min-w-[28px] text-center">{seconds}</span>
+              <div className="flex gap-2">
+                <span className="bg-black text-white px-1 text-xs rounded">02</span>:
+                <span className="bg-black text-white px-1 text-xs rounded">45</span>:
+                <span className="bg-black text-white px-1 text-xs rounded">18</span>
               </div>
             </div>
             <Link to="/products" className="text-primary border border-primary px-4 py-1 text-sm uppercase hover:bg-orange-50 font-medium">
