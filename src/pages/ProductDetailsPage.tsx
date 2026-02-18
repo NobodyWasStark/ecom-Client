@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Minus, Plus, Star, Heart, Share2, MapPin, Truck, ShieldCheck, User } from 'lucide-react';
 import { api } from '../lib/api';
-import type { Product } from '../types';
+import { useProduct } from '../hooks/useProducts';
 import { useCart } from '../store/useCart';
 import { useAuth } from '../store/useAuth';
 import toast from 'react-hot-toast';
@@ -20,9 +20,14 @@ interface Review {
 
 const ProductDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
-  const [product, setProduct] = useState<Product | null>(null);
+  // Use the React Query hook - it handles loading, error, and caching
+  const { data: product, isLoading: productLoading } = useProduct(id!);
+  
   const [reviews, setReviews] = useState<Review[]>([]);
-  const [loading, setLoading] = useState(true);
+  // We still fetch reviews manually for now, or we could create a hook for reviews too.
+  // Keeping reviews manual to limit scope of current task, but we can refactor later.
+  const [reviewsLoading, setReviewsLoading] = useState(true);
+  
   const [quantity, setQuantity] = useState(1);
   const [newReview, setNewReview] = useState({ rating: 5, comment: '' });
   const [submittingReview, setSubmittingReview] = useState(false);
@@ -37,30 +42,23 @@ const ProductDetailsPage = () => {
 
   useEffect(() => {
     if (id) {
-      fetchProduct();
       fetchReviews();
     }
   }, [id]);
 
-  const fetchProduct = async () => {
-    try {
-      const { data } = await api.get(`/products/${id}`);
-      setProduct(data.data || data);
-    } catch (error) {
-      console.error("Failed to fetch product");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const fetchReviews = async () => {
+    setReviewsLoading(true);
     try {
       const { data } = await api.get(`/reviews/products/${id}`);
       setReviews(data.data?.reviews || data.data || data.reviews || data || []);
     } catch (error) {
       console.error("Failed to fetch reviews");
+    } finally {
+      setReviewsLoading(false);
     }
   };
+
+  const loading = productLoading || reviewsLoading;
 
   const handleAddToCart = async () => {
     if (product) {

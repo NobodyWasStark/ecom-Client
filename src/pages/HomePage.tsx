@@ -1,42 +1,15 @@
-import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { api } from '../lib/api';
-import type { Product } from '../types';
+import { useProducts } from '../hooks/useProducts';
+import { useCategories } from '../hooks/useCategories';
 import ProductCard from '../components/product/ProductCard';
 import { ChevronRight } from 'lucide-react';
 
-interface Category {
-  id: string;
-  name: string;
-  slug: string;
-}
-
 const HomePage = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
-    try {
-      const [productsRes, categoriesRes] = await Promise.all([
-        api.get('/products'),
-        api.get('/categories'),
-      ]);
-      // Handle nested structure: { data: { products: [...] } }
-      const productsData = productsRes.data?.data?.products || productsRes.data?.products || productsRes.data?.data || productsRes.data || [];
-      const categoriesData = categoriesRes.data?.data?.categories || categoriesRes.data?.categories || categoriesRes.data?.data || categoriesRes.data || [];
-      setProducts(Array.isArray(productsData) ? productsData : []);
-      setCategories(Array.isArray(categoriesData) ? categoriesData : []);
-    } catch (error) {
-      console.error("Failed to fetch data", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data: productsData, isLoading: productsLoading } = useProducts();
+  const products = productsData?.products || [];
+  const { data: categories = [], isLoading: categoriesLoading } = useCategories();
+  
+  const loading = productsLoading || categoriesLoading;
 
   return (
     <div className="daraz-container pt-4 pb-12">

@@ -1,74 +1,40 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { api } from '../lib/api';
-import type { Product } from '../types';
+import { useProducts } from '../hooks/useProducts';
+import { useCategories } from '../hooks/useCategories';
 import ProductCard from '../components/product/ProductCard';
 import { ChevronDown, Filter, Search, X } from 'lucide-react';
-
-interface Category {
-  id: string;
-  name: string;
-  slug: string;
-}
 
 const ProductsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const categoryId = searchParams.get('category');
   const searchQuery = searchParams.get('search') || '';
 
-  const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(categoryId);
   const [localSearch, setLocalSearch] = useState(searchQuery);
   const [sortBy, setSortBy] = useState('best');
   const [priceMin, setPriceMin] = useState('');
   const [priceMax, setPriceMax] = useState('');
 
-  useEffect(() => {
-    fetchCategories();
-  }, []);
+  // Sync state with URL params
+  if (categoryId !== selectedCategory) {
+     setSelectedCategory(categoryId);
+  }
+  if (searchQuery !== localSearch && searchQuery !== '') {
+      setLocalSearch(searchQuery);
+  }
 
-  useEffect(() => {
-    setSelectedCategory(categoryId);
-    setLocalSearch(searchQuery);
-    fetchProducts(categoryId, searchQuery);
-  }, [categoryId, searchQuery]);
-
-  const fetchCategories = async () => {
-    try {
-      const { data } = await api.get('/categories');
-      setCategories(data.data || data || []);
-    } catch (error) {
-      console.error("Failed to fetch categories");
-    }
-  };
-
-  const fetchProducts = async (catId?: string | null, search?: string) => {
-    setIsLoading(true);
-    try {
-      let url = '/products';
-      const params = new URLSearchParams();
-      
-      if (catId) {
-        url = `/categories/${catId}/products`;
-      }
-      if (search) {
-        params.append('search', search);
-      }
-      
-      const queryString = params.toString();
-      const fullUrl = queryString ? `${url}?${queryString}` : url;
-      
-      const { data } = await api.get(fullUrl);
-      const products = data?.data?.products || data?.products || data?.data || data || [];
-      setProducts(Array.isArray(products) ? products : []);
-    } catch (error) {
-      console.error("Failed to fetch products");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { data: productsData, isLoading: isLoadingProducts } = useProducts({
+      category_id: selectedCategory || undefined,
+      search: searchQuery || undefined
+  });
+  
+  const { data: categories = [], isLoading: isLoadingCategories } = useCategories();
+  
+  const isLoading = isLoadingProducts || isLoadingCategories;
+  
+  // Use products from hook
+  const products = productsData?.products || [];
 
   const handleCategoryClick = (catId: string | null) => {
     setSelectedCategory(catId);
