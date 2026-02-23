@@ -5,7 +5,9 @@ interface Category {
   id: string;
   name: string;
   slug: string;
-  // Add other properties if available
+  description?: string | null;
+  parent_id?: string | null;
+  _count?: { products: number };
 }
 
 const fetchCategories = async (): Promise<Category[]> => {
