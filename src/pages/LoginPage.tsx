@@ -1,28 +1,33 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useLocation, useSearchParams, Link } from 'react-router-dom';
-import { useAuth } from '../store/useAuth';
-import toast from 'react-hot-toast';
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import {
+  Link,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
+import { useAuth } from "../store/useAuth";
 
 const LoginPage = () => {
   const location = useLocation();
   const [searchParams] = useSearchParams();
-  const isRegisterRoute = location.pathname === '/register';
+  const isRegisterRoute = location.pathname === "/register";
   const [isLogin, setIsLogin] = useState(!isRegisterRoute);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
-  
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+
   const { login, register, isLoading, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   // Get redirect URL from query params
-  const redirectTo = searchParams.get('redirect') || '/';
-  const sessionExpired = searchParams.get('session') === 'expired';
+  const redirectTo = searchParams.get("redirect") || "/";
+  const sessionExpired = searchParams.get("session") === "expired";
 
   // Show session expired message
   useEffect(() => {
     if (sessionExpired) {
-      toast.error('Your session has expired. Please login again.');
+      toast.error("Your session has expired. Please login again.");
     }
   }, [sessionExpired]);
 
@@ -44,10 +49,14 @@ const LoginPage = () => {
         await register(name, email, password);
         toast.success("Account created! Please login.");
         setIsLogin(true);
-        setPassword('');
+        setPassword("");
       }
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || error?.response?.data?.error || (isLogin ? "Login failed" : "Registration failed"));
+      toast.error(
+        error?.response?.data?.message ||
+          error?.response?.data?.error ||
+          (isLogin ? "Login failed" : "Registration failed"),
+      );
     }
   };
 
@@ -60,9 +69,9 @@ const LoginPage = () => {
             <button
               onClick={() => setIsLogin(true)}
               className={`flex-1 py-4 text-center font-bold text-sm uppercase transition-colors ${
-                isLogin 
-                  ? 'text-primary border-b-2 border-primary bg-orange-50' 
-                  : 'text-gray-500 hover:text-gray-700'
+                isLogin
+                  ? "text-primary border-b-2 border-primary bg-orange-50"
+                  : "text-gray-500 hover:text-gray-700"
               }`}
             >
               Login
@@ -70,9 +79,9 @@ const LoginPage = () => {
             <button
               onClick={() => setIsLogin(false)}
               className={`flex-1 py-4 text-center font-bold text-sm uppercase transition-colors ${
-                !isLogin 
-                  ? 'text-primary border-b-2 border-primary bg-orange-50' 
-                  : 'text-gray-500 hover:text-gray-700'
+                !isLogin
+                  ? "text-primary border-b-2 border-primary bg-orange-50"
+                  : "text-gray-500 hover:text-gray-700"
               }`}
             >
               Sign Up
@@ -82,43 +91,53 @@ const LoginPage = () => {
           {/* Form */}
           <div className="p-8">
             <h2 className="text-xl font-medium text-gray-800 mb-6">
-              {isLogin ? 'Welcome Back!' : 'Create Your Account'}
+              {isLogin ? "Welcome Back!" : "Create Your Account"}
             </h2>
-            
+
             <form onSubmit={handleSubmit} className="space-y-4">
               {!isLogin && (
                 <div>
-                  <label className="block text-xs font-bold text-gray-600 mb-1">Full Name *</label>
-                  <input 
-                    type="text" 
+                  <label className="block text-xs font-bold text-gray-600 mb-1">
+                    Full Name *
+                  </label>
+                  <input
+                    type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="Enter your full name" 
+                    placeholder="Enter your full name"
                     className="w-full border border-gray-300 px-4 py-3 rounded-sm text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors"
                     required
                   />
                 </div>
               )}
-              
+
               <div>
-                <label className="block text-xs font-bold text-gray-600 mb-1">Email Address *</label>
-                <input 
-                  type="email" 
+                <label className="block text-xs font-bold text-gray-600 mb-1">
+                  Email Address *
+                </label>
+                <input
+                  type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email" 
+                  placeholder="Enter your email"
                   className="w-full border border-gray-300 px-4 py-3 rounded-sm text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-600 mb-1">Password *</label>
-                <input 
-                  type="password" 
+                <label className="block text-xs font-bold text-gray-600 mb-1">
+                  Password *
+                </label>
+                <input
+                  type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder={isLogin ? "Enter your password" : "Min 8 chars, 1 uppercase, 1 number"} 
+                  placeholder={
+                    isLogin
+                      ? "Enter your password"
+                      : "Min 8 chars, 1 uppercase, 1 number"
+                  }
                   className="w-full border border-gray-300 px-4 py-3 rounded-sm text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors"
                   required
                   minLength={6}
@@ -127,33 +146,72 @@ const LoginPage = () => {
 
               {!isLogin && (
                 <p className="text-xs text-gray-500">
-                  By signing up, you agree to our <a href="#" className="text-primary hover:underline">Terms of Service</a> and <a href="#" className="text-primary hover:underline">Privacy Policy</a>.
+                  By signing up, you agree to our{" "}
+                  <a href="#" className="text-primary hover:underline">
+                    Terms of Service
+                  </a>{" "}
+                  and{" "}
+                  <a href="#" className="text-primary hover:underline">
+                    Privacy Policy
+                  </a>
+                  .
                 </p>
               )}
 
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 disabled={isLoading}
                 className="w-full py-3 uppercase font-bold text-sm rounded-sm shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-white"
-                style={{ backgroundColor: isLoading ? '#ccc' : '#f85606' }}
-                onMouseEnter={(e) => !isLoading && (e.currentTarget.style.backgroundColor = '#d04205')}
-                onMouseLeave={(e) => !isLoading && (e.currentTarget.style.backgroundColor = '#f85606')}
+                style={{ backgroundColor: isLoading ? "#ccc" : "#f85606" }}
+                onMouseEnter={(e) =>
+                  !isLoading &&
+                  (e.currentTarget.style.backgroundColor = "#d04205")
+                }
+                onMouseLeave={(e) =>
+                  !isLoading &&
+                  (e.currentTarget.style.backgroundColor = "#f85606")
+                }
               >
-                {isLoading ? 'Please wait...' : (isLogin ? 'Login' : 'Create Account')}
+                {isLoading
+                  ? "Please wait..."
+                  : isLogin
+                    ? "Login"
+                    : "Create Account"}
               </button>
             </form>
 
             {isLogin && (
               <div className="mt-4 text-center">
-                <Link to="/forgot-password" className="text-sm text-primary hover:underline">Forgot Password?</Link>
+                <Link
+                  to="/forgot-password"
+                  className="text-sm text-primary hover:underline"
+                >
+                  Forgot Password?
+                </Link>
               </div>
             )}
 
             <div className="mt-6 text-center text-sm text-gray-500">
               {isLogin ? (
-                <p>Don't have an account? <button onClick={() => setIsLogin(false)} className="text-primary font-medium hover:underline">Sign Up</button></p>
+                <p>
+                  Don't have an account?{" "}
+                  <button
+                    onClick={() => setIsLogin(false)}
+                    className="text-primary font-medium hover:underline"
+                  >
+                    Sign Up
+                  </button>
+                </p>
               ) : (
-                <p>Already have an account? <button onClick={() => setIsLogin(true)} className="text-primary font-medium hover:underline">Login</button></p>
+                <p>
+                  Already have an account?{" "}
+                  <button
+                    onClick={() => setIsLogin(true)}
+                    className="text-primary font-medium hover:underline"
+                  >
+                    Login
+                  </button>
+                </p>
               )}
             </div>
           </div>
