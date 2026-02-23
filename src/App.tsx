@@ -1,43 +1,63 @@
-import { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
-import { useAuth } from './store/useAuth';
-import { useCart } from './store/useCart';
+import { useEffect } from "react";
+import { Toaster } from "react-hot-toast";
+import {
+  Navigate,
+  Route,
+  BrowserRouter as Router,
+  Routes,
+} from "react-router-dom";
+import { useAuth } from "./store/useAuth";
+import { useCart } from "./store/useCart";
 
 // Layouts
-import Navbar from './components/layout/Navbar';
-import Footer from './components/layout/Footer';
-import AdminLayout from './components/admin/AdminLayout';
+import AdminLayout from "./components/admin/AdminLayout";
+import Footer from "./components/layout/Footer";
+import Navbar from "./components/layout/Navbar";
 
 // Public Pages
-import HomePage from './pages/HomePage';
-import ProductsPage from './pages/ProductsPage';
-import ProductDetailsPage from './pages/ProductDetailsPage';
-import CartPage from './pages/CartPage';
-import LoginPage from './pages/LoginPage';
-import ForgotPasswordPage from './pages/ForgotPasswordPage';
-import ResetPasswordPage from './pages/ResetPasswordPage';
+import CartPage from "./pages/CartPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import HomePage from "./pages/HomePage";
+import LoginPage from "./pages/LoginPage";
+import ProductDetailsPage from "./pages/ProductDetailsPage";
+import ProductsPage from "./pages/ProductsPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
+
+// Info / Policy Pages
+import AboutPage from "./pages/AboutPage";
+import ContactPage from "./pages/ContactPage";
+import CookiePolicyPage from "./pages/CookiePolicyPage";
+import FAQPage from "./pages/FAQPage";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
+import ReturnPolicyPage from "./pages/ReturnPolicyPage";
+import TermsPage from "./pages/TermsPage";
 
 // Protected User Pages
-import CheckoutPage from './pages/CheckoutPage';
-import OrdersPage from './pages/OrdersPage';
-import OrderDetailsPage from './pages/OrderDetailsPage';
-import AddressesPage from './pages/AddressesPage';
-import ProfilePage from './pages/ProfilePage';
-import MyReviewsPage from './pages/MyReviewsPage';
-import PaymentSuccessPage from './pages/PaymentSuccessPage';
-import PaymentFailedPage from './pages/PaymentFailedPage';
+import AddressesPage from "./pages/AddressesPage";
+import CheckoutPage from "./pages/CheckoutPage";
+import MyReviewsPage from "./pages/MyReviewsPage";
+import OrderDetailsPage from "./pages/OrderDetailsPage";
+import OrdersPage from "./pages/OrdersPage";
+import PaymentFailedPage from "./pages/PaymentFailedPage";
+import PaymentPendingPage from "./pages/PaymentPendingPage";
+import PaymentSuccessPage from "./pages/PaymentSuccessPage";
+import ProfilePage from "./pages/ProfilePage";
 
 // Admin Pages
-import AdminDashboardPage from './pages/admin/AdminDashboardPage';
-import AdminOrdersPage from './pages/admin/AdminOrdersPage';
-import AdminProductsPage from './pages/admin/AdminProductsPage';
-import AdminUsersPage from './pages/admin/AdminUsersPage';
+import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
+import AdminOrdersPage from "./pages/admin/AdminOrdersPage";
+import AdminProductsPage from "./pages/admin/AdminProductsPage";
+import AdminUsersPage from "./pages/admin/AdminUsersPage";
 
 // Protected Route Component
 const ProtectedRoute = ({ children }: { children: React.ReactElement }) => {
   const { isAuthenticated, isLoading } = useAuth();
-  if (isLoading) return <div className="flex justify-center items-center min-h-[400px]"><div className="text-gray-500">Loading...</div></div>;
+  if (isLoading)
+    return (
+      <div className="flex justify-center items-center min-h-[400px]">
+        <div className="text-gray-500">Loading...</div>
+      </div>
+    );
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   return children;
 };
@@ -78,26 +98,222 @@ function App() {
         </Route>
 
         {/* Main App Routes */}
-        <Route path="/" element={<MainLayout><HomePage /></MainLayout>} />
-        <Route path="/products" element={<MainLayout><ProductsPage /></MainLayout>} />
-        <Route path="/products/:id" element={<MainLayout><ProductDetailsPage /></MainLayout>} />
-        <Route path="/cart" element={<MainLayout><CartPage /></MainLayout>} />
-        
+        <Route
+          path="/"
+          element={
+            <MainLayout>
+              <HomePage />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/products"
+          element={
+            <MainLayout>
+              <ProductsPage />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/products/:id"
+          element={
+            <MainLayout>
+              <ProductDetailsPage />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/cart"
+          element={
+            <MainLayout>
+              <CartPage />
+            </MainLayout>
+          }
+        />
+
+        {/* Info / Policy Pages */}
+        <Route
+          path="/about"
+          element={
+            <MainLayout>
+              <AboutPage />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/contact"
+          element={
+            <MainLayout>
+              <ContactPage />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/faq"
+          element={
+            <MainLayout>
+              <FAQPage />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/return-policy"
+          element={
+            <MainLayout>
+              <ReturnPolicyPage />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/terms"
+          element={
+            <MainLayout>
+              <TermsPage />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/privacy"
+          element={
+            <MainLayout>
+              <PrivacyPolicyPage />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/cookies"
+          element={
+            <MainLayout>
+              <CookiePolicyPage />
+            </MainLayout>
+          }
+        />
+
         {/* Auth Routes */}
-        <Route path="/login" element={<MainLayout><LoginPage /></MainLayout>} />
-        <Route path="/register" element={<MainLayout><LoginPage /></MainLayout>} />
-        <Route path="/forgot-password" element={<MainLayout><ForgotPasswordPage /></MainLayout>} />
-        <Route path="/reset-password" element={<MainLayout><ResetPasswordPage /></MainLayout>} />
+        <Route
+          path="/login"
+          element={
+            <MainLayout>
+              <LoginPage />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <MainLayout>
+              <LoginPage />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/forgot-password"
+          element={
+            <MainLayout>
+              <ForgotPasswordPage />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/reset-password"
+          element={
+            <MainLayout>
+              <ResetPasswordPage />
+            </MainLayout>
+          }
+        />
 
         {/* Protected User Routes */}
-        <Route path="/checkout" element={<MainLayout><ProtectedRoute><CheckoutPage /></ProtectedRoute></MainLayout>} />
-        <Route path="/orders" element={<MainLayout><ProtectedRoute><OrdersPage /></ProtectedRoute></MainLayout>} />
-        <Route path="/orders/:id" element={<MainLayout><ProtectedRoute><OrderDetailsPage /></ProtectedRoute></MainLayout>} />
-        <Route path="/addresses" element={<MainLayout><ProtectedRoute><AddressesPage /></ProtectedRoute></MainLayout>} />
-        <Route path="/profile" element={<MainLayout><ProtectedRoute><ProfilePage /></ProtectedRoute></MainLayout>} />
-        <Route path="/my-reviews" element={<MainLayout><ProtectedRoute><MyReviewsPage /></ProtectedRoute></MainLayout>} />
-        <Route path="/payment/success" element={<MainLayout><ProtectedRoute><PaymentSuccessPage /></ProtectedRoute></MainLayout>} />
-        <Route path="/payment/failed" element={<MainLayout><ProtectedRoute><PaymentFailedPage /></ProtectedRoute></MainLayout>} />
+        <Route
+          path="/checkout"
+          element={
+            <MainLayout>
+              <ProtectedRoute>
+                <CheckoutPage />
+              </ProtectedRoute>
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/orders"
+          element={
+            <MainLayout>
+              <ProtectedRoute>
+                <OrdersPage />
+              </ProtectedRoute>
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/orders/:id"
+          element={
+            <MainLayout>
+              <ProtectedRoute>
+                <OrderDetailsPage />
+              </ProtectedRoute>
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/addresses"
+          element={
+            <MainLayout>
+              <ProtectedRoute>
+                <AddressesPage />
+              </ProtectedRoute>
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <MainLayout>
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/my-reviews"
+          element={
+            <MainLayout>
+              <ProtectedRoute>
+                <MyReviewsPage />
+              </ProtectedRoute>
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/payment/success"
+          element={
+            <MainLayout>
+              <ProtectedRoute>
+                <PaymentSuccessPage />
+              </ProtectedRoute>
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/payment/pending"
+          element={
+            <MainLayout>
+              <ProtectedRoute>
+                <PaymentPendingPage />
+              </ProtectedRoute>
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/payment/failed"
+          element={
+            <MainLayout>
+              <ProtectedRoute>
+                <PaymentFailedPage />
+              </ProtectedRoute>
+            </MainLayout>
+          }
+        />
       </Routes>
     </Router>
   );

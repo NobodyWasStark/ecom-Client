@@ -9,15 +9,17 @@ export interface ApiResponse<T> {
 /** Paginated response from list endpoints */
 export interface PaginatedResponse<T> {
   products: T[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
 }
 
 /** Auth response with user and token */
 export interface AuthResponse {
-  user: import('./index').User;
+  user: import("./index").User;
   token: string;
 }
 

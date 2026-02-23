@@ -118,7 +118,7 @@ const LoginPage = () => {
                   type="password" 
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder={isLogin ? "Enter your password" : "Minimum 6 characters"} 
+                  placeholder={isLogin ? "Enter your password" : "Min 8 chars, 1 uppercase, 1 number"} 
                   className="w-full border border-gray-300 px-4 py-3 rounded-sm text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors"
                   required
                   minLength={6}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MapPin, Plus, Check } from 'lucide-react';
+import { MapPin, Plus, Check, MessageCircle } from 'lucide-react';
 import { api } from '../lib/api';
 import { useCart } from '../store/useCart';
 import toast from 'react-hot-toast';
@@ -68,20 +68,16 @@ const CheckoutPage = () => {
       });
       const order = orderRes.data.data || orderRes.data;
 
-      // Step 2: Initialize bKash payment
+      // Step 2: Initialize bKash payment (get WhatsApp link)
       const paymentRes = await api.post('/payments/init', {
         order_id: order.id,
       });
-      const { bkashURL } = paymentRes.data.data || paymentRes.data;
+      const paymentData = paymentRes.data.data || paymentRes.data;
 
-      if (bkashURL) {
-        // Redirect to bKash payment page
-        window.location.href = bkashURL;
-      } else {
-        toast.error('Payment initialization failed');
-      }
+      // Step 3: Navigate to pending payment page with order details
+      navigate(`/payment/pending?orderId=${order.id}&paymentId=${paymentData.paymentID}&amount=${paymentData.amount}&whatsapp=${encodeURIComponent(paymentData.whatsappURL)}`);
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || 'Failed to place order');
+      toast.error(error?.response?.data?.error || error?.response?.data?.message || 'Failed to place order');
     } finally {
       setProcessing(false);
     }
@@ -217,11 +213,17 @@ const CheckoutPage = () => {
             {/* Payment Method */}
             <div className="mt-6 pt-4 border-t border-gray-100">
               <h3 className="font-medium text-gray-800 mb-3">Payment Method</h3>
-              <div className="flex items-center gap-3 p-3 border border-primary rounded-sm bg-orange-50">
+              <div className="flex items-center gap-3 p-3 border border-[#e2136e] rounded-sm bg-pink-50">
                 <div className="bg-[#e2136e] text-white px-3 py-1 rounded font-bold text-sm">
                   bKash
                 </div>
-                <span className="text-sm text-gray-700">Pay with bKash</span>
+                <div className="flex-1">
+                  <span className="text-sm text-gray-700 font-medium">Send Money via bKash</span>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    Pay via WhatsApp — we'll confirm your order manually
+                  </p>
+                </div>
+                <MessageCircle className="w-5 h-5 text-green-500" />
               </div>
             </div>
 

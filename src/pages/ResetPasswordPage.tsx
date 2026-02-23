@@ -20,8 +20,8 @@ const ResetPasswordPage = () => {
       toast.error('Passwords do not match');
       return;
     }
-    if (password.length < 6) {
-      toast.error('Password must be at least 6 characters');
+    if (password.length < 8) {
+      toast.error('Password must be at least 8 characters');
       return;
     }
     setIsLoading(true);
@@ -91,7 +91,7 @@ const ResetPasswordPage = () => {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Minimum 6 characters"
+                  placeholder="Min 8 chars, 1 uppercase, 1 number"
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-sm focus:border-primary outline-none"
                   required
                   minLength={6}
